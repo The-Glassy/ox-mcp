@@ -44,6 +44,8 @@ export async function buildContainer(
     .bind<string | undefined>(TYPES.ConfigPathOverride)
     .toConstantValue(options.configPath);
 
+  container.bind<Env>(TYPES.Env).toConstantValue(env);
+
   const loader = container.get<ConfigLoader>(TYPES.ConfigLoader);
   const rawConfig = await loader.load();
   const resolver = new ConfigResolver(rawConfig, env);

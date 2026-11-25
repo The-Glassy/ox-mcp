@@ -131,7 +131,8 @@ const emailSend: Tool = {
   },
   async execute(args, ctx) {
     const account = ctx.resolver.getServer(args.server as string | undefined);
-    return json(await ctx.smtp.forAccount(account).send(buildOutgoing(args)));
+    const message = buildOutgoing(args);
+    return json(await ctx.sendLimit.send(account.id, () => ctx.smtp.forAccount(account).send(message)));
   },
 };
 
@@ -180,7 +181,7 @@ async function doReply(
   const cc = replyAll ? dedupe(original.ccAddresses.filter(notSelf)) : [];
   const subject = /^re:/i.test(original.subject) ? original.subject : `Re: ${original.subject}`;
 
-  const result = await ctx.smtp.forAccount(account).send({
+  const message = {
     to,
     cc: cc.length ? cc : undefined,
     subject,
@@ -188,8 +189,8 @@ async function doReply(
     html: args.html as string | undefined,
     inReplyTo: original.messageId,
     references: original.messageId,
-  });
-  return json(result);
+  };
+  return json(await ctx.sendLimit.send(account.id, () => ctx.smtp.forAccount(account).send(message)));
 }
 
 function replyTool(name: string, replyAll: boolean): Tool {

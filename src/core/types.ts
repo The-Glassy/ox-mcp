@@ -37,6 +37,7 @@ export const TYPES = {
   CardDavClientFactory: Symbol.for('CardDavClientFactory'),
 
   // tools
+  DailySendLimit: Symbol.for('DailySendLimit'),
   Tool: Symbol.for('Tool'),
   ToolRegistry: Symbol.for('ToolRegistry'),
 

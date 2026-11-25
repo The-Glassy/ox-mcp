@@ -145,11 +145,18 @@ Every section field is settable via env: `OX_MCP_[ID_]<SECTION>_<FIELD>` with SE
 | `OX_MCP_MAIL_USER` / `OX_MCP_CALDAV_USER` / `OX_MCP_CARDDAV_USER` | section login user |
 | `OX_MCP_MAIL_APP_PASSWORD` / `OX_MCP_CALDAV_APP_PASSWORD` / … | section app password (basic auth) |
 | `OX_MCP_MAIL_IMAP_HOST` / `_IMAP_PORT` / `_SMTP_HOST` / `_SMTP_PORT` | mail transport overrides (Gmail-style split hosts) |
+| `OX_MCP_MAIL_IMAP_SERVERNAME` / `_SMTP_SERVERNAME` | provider TLS hostname for a TCP proxy, with TLS required |
 | `OX_MCP_MAIL_IMAP_SECURE` / `_SMTP_SECURE` | force TLS (`true`) or STARTTLS (`false`) on a non-standard port |
 | `OX_MCP_MAIL_AUTH_TYPE`, `_CLIENT_ID`, `_REFRESH_TOKEN`, … | per-section OAuth/OIDC fields |
 | `OX_MCP_TIMEOUT_SECONDS` | request timeout for all HTTP/IMAP/SMTP operations (default 300) |
 
 Default ports: IMAP 993, SMTP 465, DAV 443, ManageSieve 4190. TLS mode derives from the port (993/465 implicit TLS; 143/587 STARTTLS) unless `secure` is set explicitly.
+
+### Daily send limit
+
+`OX_MCP_SEND_LIMIT_PER_DAY` takes a non-negative integer. Unset or `0` means unlimited. A positive value limits successful calls to `email_send`, `email_reply`, and `email_reply_all` together per configured account ID. Drafts are independent of the limit. The count resets at midnight in `OX_MCP_SEND_LIMIT_TZ` (default `Europe/Vienna`).
+
+Set `OX_MCP_STATE_DIR` to a persistent, writable local directory shared by processes serving the same accounts. It defaults to `~/.ox-mcp/state`. Sends reserve a slot on disk before contacting the mail server and release it on a reported transport failure. If the process stops before learning the outcome, the slot stays reserved until midnight. An unreadable or invalid `daily-send-limit.json` blocks sending until the state is restored.
 
 ### Validation
 

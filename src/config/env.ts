@@ -27,9 +27,11 @@ export const SECTION_FIELDS = [
   // mail-only transport overrides
   'TRANSPORT',
   'IMAP_HOST',
+  'IMAP_SERVERNAME',
   'IMAP_PORT',
   'IMAP_SECURE',
   'SMTP_HOST',
+  'SMTP_SERVERNAME',
   'SMTP_PORT',
   'SMTP_SECURE',
 ] as const;

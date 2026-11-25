@@ -273,6 +273,10 @@ export class ImapClient {
       host: this.section.imap.host,
       port: this.section.imap.port,
       secure: this.section.imap.secure,
+      ...(this.section.imap.servername ? {
+        servername: this.section.imap.servername,
+        doSTARTTLS: !this.section.imap.secure,
+      } : {}),
       auth,
       logger: false,
       // Bound the connect handshake and per-command idle so a stalled server

@@ -4,8 +4,10 @@ import type { ConfigResolver } from '../config/config-resolver.js';
 import type { ImapClientFactory, SieveClientFactory, SmtpClientFactory } from '../mail/mail.module.js';
 import type { CalDavClientFactory, FreeBusyClientFactory } from '../calendar/calendar.module.js';
 import type { CardDavClientFactory } from '../contacts/contacts.module.js';
+import type { DailySendLimit } from '../mail/daily-send-limit.js';
 
 export interface ToolContext {
+  sendLimit: DailySendLimit;
   resolver: ConfigResolver;
   imap: ImapClientFactory;
   smtp: SmtpClientFactory;

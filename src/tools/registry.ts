@@ -5,6 +5,7 @@ import type { ConfigResolver } from '../config/config-resolver.js';
 import type { ImapClientFactory, SieveClientFactory, SmtpClientFactory } from '../mail/mail.module.js';
 import type { CalDavClientFactory, FreeBusyClientFactory } from '../calendar/calendar.module.js';
 import type { CardDavClientFactory } from '../contacts/contacts.module.js';
+import type { DailySendLimit } from '../mail/daily-send-limit.js';
 import { errorResult, type Tool, type ToolContext, type ToolResult } from './tool.js';
 import { serverTools } from './server-tools.js';
 import { emailTools } from './email-tools.js';
@@ -29,6 +30,7 @@ export class ToolRegistry {
     @inject(TYPES.CardDavClientFactory) private readonly carddav: CardDavClientFactory,
     @inject(TYPES.FreeBusyClient) private readonly freeBusy: FreeBusyClientFactory,
     @inject(TYPES.Logger) private readonly logger: Logger,
+    @inject(TYPES.DailySendLimit) private readonly sendLimit: DailySendLimit,
   ) {}
 
   /** Tools to advertise (enabled for at least one account). */
@@ -71,6 +73,7 @@ export class ToolRegistry {
       resolver: this.resolver,
       imap: this.imap,
       smtp: this.smtp,
+      sendLimit: this.sendLimit,
       sieve: this.sieve,
       caldav: this.caldav,
       carddav: this.carddav,

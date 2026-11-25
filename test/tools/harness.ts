@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { DailySendLimit } from '../../src/mail/daily-send-limit.js';
 import { ToolRegistry } from '../../src/tools/registry.js';
 import { ConfigResolver } from '../../src/config/config-resolver.js';
 import { configSchema } from '../../src/config/config.schema.js';
@@ -97,6 +98,7 @@ export function makeRegistry(
   fakes: Fakes,
   configInput: unknown = { servers: { default: FULL_ACCOUNT_ALL_ENABLED } },
   env: Env = {},
+  sendLimit = new DailySendLimit(env, '.'),
 ): ToolRegistry {
   const resolver = new ConfigResolver(configSchema.parse(configInput), env);
   return new ToolRegistry(
@@ -108,5 +110,6 @@ export function makeRegistry(
     { forAccount: () => fakes.carddav as unknown as CardDavClient } as CardDavClientFactory,
     { forAccount: () => fakes.freeBusy as unknown as FreeBusyClient } as FreeBusyClientFactory,
     silentLogger,
+    sendLimit,
   );
 }

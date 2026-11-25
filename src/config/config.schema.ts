@@ -75,6 +75,7 @@ const featuresSchema = z.record(z.string(), z.boolean());
 const endpointSchema = z.object({
   host: z.string().optional(),
   port: z.number().int().min(1).max(65535).optional(),
+  servername: z.string().min(1).optional(),
   /**
    * Force implicit TLS on (`true`) or STARTTLS (`false`). When omitted, TLS is
    * derived from the port (993/465 ⇒ implicit TLS, anything else ⇒ STARTTLS).
@@ -169,6 +170,7 @@ export function buildJsonSchema(): unknown {
     properties: {
       host: { type: 'string' },
       port: { type: 'integer' },
+      servername: { type: 'string', description: 'TLS hostname when connecting through a TCP proxy.' },
       secure: {
         type: 'boolean',
         description: 'Force implicit TLS (true) or STARTTLS (false). Default: derived from port (993/465 = TLS).',

@@ -76,6 +76,15 @@ function makeClient(fake: FakeImapFlow) {
 }
 
 describe('ImapClient', () => {
+  it('keeps the provider TLS name when using a loopback proxy', async () => {
+    const fake = new FakeImapFlow();
+    const factory = vi.fn(() => fake as unknown as ImapFlow);
+    const imap = { host: '127.0.0.1', port: 1993, secure: true, servername: 'imap.example.com' };
+    const client = new ImapClient({ ...section, imap }, basicAuth, factory);
+    await client.listFolders();
+    expect(factory).toHaveBeenCalledWith(expect.objectContaining(imap));
+  });
+
   it('connects with secure IMAP options and the resolved auth', async () => {
     const fake = new FakeImapFlow();
     const { client, captured } = makeClient(fake);

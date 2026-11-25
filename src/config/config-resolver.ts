@@ -72,6 +72,7 @@ export interface ResolvedSection {
 export interface ResolvedEndpoint {
   host: string;
   port: number;
+  servername?: string;
   /** true = implicit TLS; false = STARTTLS upgrade. Derived from the port. */
   secure: boolean;
 }
@@ -272,17 +273,21 @@ export class ConfigResolver {
       parsePort(sectionFieldEnv(this.env, id, 'mail', 'SMTP_PORT')) ??
       cfg?.smtp?.port ??
       SMTP_TLS_PORT;
+    const imapServername = sectionFieldEnv(this.env, id, 'mail', 'IMAP_SERVERNAME') ?? cfg?.imap?.servername;
+    const smtpServername = sectionFieldEnv(this.env, id, 'mail', 'SMTP_SERVERNAME') ?? cfg?.smtp?.servername;
     return {
       ...base,
       transport,
       imap: {
         host: sectionFieldEnv(this.env, id, 'mail', 'IMAP_HOST') ?? cfg?.imap?.host ?? base.server,
         port: imapPort,
+        ...(imapServername ? { servername: imapServername } : {}),
         secure: resolveSecure(sectionFieldEnv(this.env, id, 'mail', 'IMAP_SECURE'), cfg?.imap?.secure, imapPort === IMAP_TLS_PORT),
       },
       smtp: {
         host: sectionFieldEnv(this.env, id, 'mail', 'SMTP_HOST') ?? cfg?.smtp?.host ?? base.server,
         port: smtpPort,
+        ...(smtpServername ? { servername: smtpServername } : {}),
         secure: resolveSecure(sectionFieldEnv(this.env, id, 'mail', 'SMTP_SECURE'), cfg?.smtp?.secure, smtpPort === SMTP_TLS_PORT),
       },
     };

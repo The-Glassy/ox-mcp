@@ -40,6 +40,10 @@ export class SmtpClient {
       host: this.section.smtp.host,
       port: this.section.smtp.port,
       secure: this.section.smtp.secure,
+      ...(this.section.smtp.servername ? {
+        tls: { servername: this.section.smtp.servername },
+        requireTLS: !this.section.smtp.secure,
+      } : {}),
       auth: toNodemailerAuth(auth),
       // Bound each phase so a stalled SMTP server cannot hang the session.
       connectionTimeout: this.timeoutMs,

@@ -24,6 +24,18 @@ const tokenAuth: AuthProvider = {
 };
 
 describe('SmtpClient', () => {
+  it('requires STARTTLS with the provider TLS name through a loopback proxy', async () => {
+    const smtp = { host: '127.0.0.1', port: 1587, secure: false, servername: 'smtp.example.com' };
+    const factory = vi.fn(() => ({
+      sendMail: vi.fn(async () => ({ messageId: 'id', accepted: ['x@ex.com'], rejected: [] })),
+    } as unknown as Transporter));
+    const client = new SmtpClient({ ...section, smtp }, basicAuth, factory);
+    await client.send({ to: 'x@ex.com', subject: 's' });
+    expect(factory).toHaveBeenCalledWith(expect.objectContaining({
+      host: smtp.host, port: smtp.port, secure: false, requireTLS: true, tls: { servername: smtp.servername },
+    }));
+  });
+
   it('sends with secure options, basic auth and a from header', async () => {
     const sendMail = vi.fn(async () => ({
       messageId: '<id@ex.com>',
